@@ -1,0 +1,13 @@
+flask
+flask-cors
+flask-sqlalchemy
+sqlalchemy
+python-dotenv
+
+opencv-python
+numpy
+pillow
+
+ultralytics
+torch
+torchvision
