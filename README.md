@@ -139,9 +139,8 @@ http://localhost:3000
 ---
 
 ## 📸 Screenshot
-- Dashboard
+- helmet detection page
 <img width="1898" height="899" alt="Screenshot 2025-12-28 201744" src="https://github.com/user-attachments/assets/add922e7-af45-4c81-85e7-0f1819bd5677" />
-
 
 ---
 
