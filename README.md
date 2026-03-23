@@ -205,4 +205,4 @@ Passionate about **AI, Full Stack Development & Innovation** 🚀
 🔗 GitHub: https://github.com/pavan050505
 📧 Email: pavanbhosle1616@gmail.com
 
-⭐ If you like this project, don’t forget to give it a star! It really helps. ⭐
+⭐ If you like this project, don’t forget to give it a star! It really helps.⭐
