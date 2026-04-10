@@ -16,7 +16,6 @@ from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
-from services.detection import HelmetDetector
 import cv2
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -34,24 +33,14 @@ def create_app():
     app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "change-this")
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(minutes=15)
     app.config["JWT_REFRESH_TOKEN_EXPIRES"] = datetime.timedelta(days=30)
-    CORS(app, supports_credentials=True, resources={
+    CORS(app, resources={
         r"/api/*": {
-            "origins": [
-                "http://localhost:5173",
-                "http://127.0.0.1:5173",
-                "http://localhost:5174",
-                "http://127.0.0.1:5174",
-            ],
+            "origins": "*",
             "allow_headers": ["Content-Type", "Authorization"],
             "expose_headers": ["Authorization"]
         },
         r"/stream/*": {
-            "origins": [
-                "http://localhost:5173",
-                "http://127.0.0.1:5173",
-                "http://localhost:5174",
-                "http://127.0.0.1:5174",
-            ]
+            "origins": "*"
         }
     })
     db = SQLAlchemy(app)
@@ -89,7 +78,7 @@ def create_app():
     with app.app_context():
         db.create_all()
 
-    detector = HelmetDetector()
+    detector_ref = {"detector": None}
 
     # Global timer state for the demo stream
     timer_state = {
@@ -142,6 +131,13 @@ def create_app():
                 if not ok:
                     break
 
+                if detector_ref["detector"] is None:
+                    try:
+                        from services.detection import HelmetDetector
+                        detector_ref["detector"] = HelmetDetector()
+                    except Exception:
+                        detector_ref["detector"] = None
+
                 current_time = time.time()
                 dt = current_time - last_time
                 last_time = current_time
@@ -150,8 +146,13 @@ def create_app():
                 if not ok2:
                     continue
                 img_bytes = buf.tobytes()
-                result = detector.detect(img_bytes)
-                boxes = result.get("boxes", [])
+                boxes = []
+                if detector_ref["detector"] is not None:
+                    try:
+                        result = detector_ref["detector"].detect(img_bytes)
+                        boxes = result.get("boxes", [])
+                    except Exception:
+                        boxes = []
 
                 helmet_count = sum(1 for b in boxes if b.get("is_helmet"))
                 no_helmet_count = sum(1 for b in boxes if not b.get("is_helmet"))
@@ -296,7 +297,13 @@ def create_app():
             return jsonify({"error": "invalid image"}), 400
         
         # detector.detect now returns a dict {helmet, confidence, image}
-        result = detector.detect(img_bytes)
+        if detector_ref["detector"] is None:
+            try:
+                from services.detection import HelmetDetector
+                detector_ref["detector"] = HelmetDetector()
+            except Exception as e:
+                return jsonify({"error": "model_unavailable"}), 503
+        result = detector_ref["detector"].detect(img_bytes)
         helmet_on = result["helmet"]
         confidence = result["confidence"]
         

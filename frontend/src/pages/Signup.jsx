@@ -63,9 +63,12 @@ export default function Signup() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
       })
-      const json = await res.json()
+      let json = null
+      try {
+        json = await res.json()
+      } catch (_) {}
       if (!res.ok) {
-        setError(json.error || "Signup failed")
+        setError((json && json.error) || `Signup failed (${res.status})`)
         setLoading(false)
         return
       }
@@ -76,8 +79,11 @@ export default function Signup() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
       })
-      const json2 = await res2.json()
-      if (res2.ok && json2.token) {
+      let json2 = null
+      try {
+        json2 = await res2.json()
+      } catch (_) {}
+      if (res2.ok && json2 && json2.token) {
         login(json2.token)
         try {
           // Store additional profile info locally as backend doesn't support it yet

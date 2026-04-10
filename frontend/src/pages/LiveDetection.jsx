@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react"
 import WebcamFeed from "../components/WebcamFeed.jsx"
+import { useAuth } from "../auth/AuthContext.jsx"
 
 export default function LiveDetection() {
   const [timer, setTimer] = useState("00:00")
   const [totalAccumulated, setTotalAccumulated] = useState(0)
+  const { origin } = useAuth()
 
   useEffect(() => {
     const interval = setInterval(() => {
-      fetch("http://127.0.0.1:5000/api/timer_status")
+      fetch(origin + "/api/timer_status")
         .then(res => res.json())
         .then(data => {
             const totalSeconds = Math.floor(data.accumulated_time)
@@ -19,7 +21,7 @@ export default function LiveDetection() {
         .catch(() => {})
     }, 1000)
     return () => clearInterval(interval)
-  }, [])
+  }, [origin])
 
   return (
     <div className="flex flex-col gap-6">

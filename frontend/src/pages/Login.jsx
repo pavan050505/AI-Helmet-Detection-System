@@ -22,13 +22,18 @@ export default function Login() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
       })
-      const json = await res.json()
+      let json = null
+      try {
+        json = await res.json()
+      } catch (_) {}
       if (!res.ok) {
-        setError(json.error || "Login failed")
+        setError((json && json.error) || `Login failed (${res.status})`)
         setLoading(false)
         return
       }
-      login(json.token)
+      if (json && json.token) {
+        login(json.token)
+      }
       navigate("/")
     } catch (err) {
       setError("Network error. Please try again.")

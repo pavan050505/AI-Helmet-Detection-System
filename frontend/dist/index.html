@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Helmet Detection</title>
+    <script>
+      ;(function(){
+        const key = 'client_id'
+        if (!localStorage.getItem(key)) {
+          const id = 'client-' + Math.random().toString(36).slice(2)
+          localStorage.setItem(key, id)
+        }
+      })()
+    </script>
+    <script type="module" crossorigin src="/assets/index-D3avWS7q.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-C5dLN_zk.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
