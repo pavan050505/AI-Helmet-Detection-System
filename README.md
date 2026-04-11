@@ -148,8 +148,7 @@ http://localhost:3000
 
 - 🎓 **College / Final Year AI Project**  
 - 🚦 **Smart Traffic Management System**  
-- 🛣 **Road Safety Campaigns**  
-- 🏆 **Hackathons & Competitions**  
+- 🛣 **Road Safety Campaigns**    
 - 💼 **Portfolio Project**  
 
 ---
